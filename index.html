@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#153f35">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>DayBridge — Money made clearer</title>
+<style>
+:root{--green:#174638;--green2:#24785f;--mint:#e8f4ee;--bg:#f5f7f5;--ink:#17251f;--muted:#68766f;--line:#e4eae5;--red:#b94a48;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink);padding-bottom:34px}
+header{background:var(--green);color:white;padding:22px 18px 26px;border-radius:0 0 24px 24px}
+.top{display:flex;align-items:center;justify-content:space-between;max-width:620px;margin:auto}
+.brand{font-size:23px;font-weight:800;letter-spacing:-.6px}.tag{font-size:11px;color:#d5e8df;margin-top:2px}
+.pill{border:1px solid #ffffff55;border-radius:20px;padding:6px 10px;font-size:11px;color:#e8f4ee}
+main{max-width:620px;margin:-8px auto 0;padding:0 15px}
+.balance{background:white;border-radius:18px;padding:19px;box-shadow:0 8px 24px #102c1b12}
+.eyebrow{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.7px;text-transform:uppercase}
+.amount{font-size:32px;font-weight:800;letter-spacing:-1px;margin:5px 0 16px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:#f7faf8;border-radius:12px;padding:11px}.stat small{display:block;color:var(--muted);font-size:11px}.stat strong{font-size:16px;display:block;margin-top:4px}.positive{color:var(--green2)}.negative{color:var(--red)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:16px 0}
+.action{border:0;border-radius:14px;padding:15px 12px;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+.income{background:var(--green);color:white}.expense{background:white;color:var(--ink);border:1px solid var(--line)}
+.sectionhead{display:flex;justify-content:space-between;align-items:center;margin:23px 2px 10px}.sectionhead h2{font-size:16px;margin:0}.sectionhead span{font-size:11px;color:var(--muted)}
+.list{background:white;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+.item{display:flex;align-items:center;gap:11px;padding:13px 14px;border-bottom:1px solid var(--line)}.item:last-child{border-bottom:0}
+.dot{width:36px;height:36px;border-radius:12px;background:var(--mint);display:grid;place-items:center;font-size:17px}
+.details{flex:1;min-width:0}.details strong{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.details small{color:var(--muted);font-size:11px}
+.itemamount{font-size:13px;font-weight:750;white-space:nowrap}.del{border:0;background:none;color:#9aa59e;font-size:18px;padding:5px;cursor:pointer}
+.empty{text-align:center;padding:30px 16px;color:var(--muted);font-size:13px}
+.note{font-size:11px;line-height:1.5;color:var(--muted);margin:13px 3px}
+footer{text-align:center;color:#94a099;font-size:10px;margin:22px 0}
+dialog{border:0;border-radius:20px;padding:0;width:calc(100% - 30px);max-width:440px;box-shadow:0 20px 70px #0004}
+dialog::backdrop{background:#0d2019a8}.modal{padding:20px}.modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.modalhead h2{margin:0;font-size:18px}.close{border:0;background:#f0f3f1;border-radius:50%;width:32px;height:32px;font-size:18px}
+label{display:block;font-size:12px;font-weight:700;margin:13px 0 6px;color:#435149}
+input,select{width:100%;padding:13px;border:1px solid #dce5de;border-radius:11px;font:inherit;font-size:14px;background:white;color:var(--ink)}
+.submit{width:100%;border:0;background:var(--green);color:white;padding:14px;border-radius:12px;font-size:14px;font-weight:750;margin-top:18px}
+.typehint{font-size:12px;color:var(--muted);margin-top:-7px}
+@media(min-width:560px){header{padding-top:28px}main{padding:0 20px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="top">
+  <div><div class="brand">DayBridge</div><div class="tag">Your day. Your money. Your progress.</div></div>
+  <div class="pill">FIRST TEST VERSION</div>
+ </div>
+</header>
+<main>
+ <section class="balance" aria-live="polite">
+  <div class="eyebrow">Your recorded balance</div>
+  <div class="amount" id="balance">₦0.00</div>
+  <div class="stats">
+   <div class="stat"><small>Total income</small><strong class="positive" id="incomeTotal">₦0.00</strong></div>
+   <div class="stat"><small>Total expenses</small><strong class="negative" id="expenseTotal">₦0.00</strong></div>
+  </div>
+ </section>
+ <div class="actions">
+  <button class="action income" onclick="openForm('income')">＋ Add income</button>
+  <button class="action expense" onclick="openForm('expense')">－ Add expense</button>
+ </div>
+ <div class="sectionhead"><h2>Recent activity</h2><span id="count">0 records</span></div>
+ <section class="list" id="transactions"><div class="empty">No transactions yet.<br>Add your first income or expense to begin.</div></section>
+ <p class="note">Your records are saved in this browser on this device. This prototype does not connect to your bank, move money, or sync across devices. Keep a separate backup of important records.</p>
+ <footer>DayBridge · Prototype 0.1 · Built for testing</footer>
+</main>
+<dialog id="entryDialog">
+ <form class="modal" id="entryForm">
+  <div class="modalhead"><h2 id="formTitle">Add income</h2><button type="button" class="close" onclick="closeForm()" aria-label="Close">×</button></div>
+  <div class="typehint" id="typeHint">Record money received.</div>
+  <label for="description">What was it for?</label>
+  <input id="description" maxlength="60" placeholder="e.g. Customer payment" required>
+  <label for="amount">Amount (₦)</label>
+  <input id="amount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="e.g. 5000" required>
+  <label for="category">Category</label>
+  <select id="category">
+   <option>General</option><option>Sales</option><option>Salary</option><option>Food</option><option>Transport</option><option>Bills</option><option>Stock / supplies</option><option>Other</option>
+  </select>
+  <button class="submit" type="submit">Save transaction</button>
+ </form>
+</dialog>
+<script>
+const KEY='daybridge_transactions_v1';
+let currentType='income';
+let transactions=[];
+try{transactions=JSON.parse(localStorage.getItem(KEY)||'[]');if(!Array.isArray(transactions))transactions=[]}catch(e){transactions=[]}
+const money=n=>'₦'+Number(n).toLocaleString('en-NG',{minimumFractionDigits:2,maximumFractionDigits:2});
+function save(){try{localStorage.setItem(KEY,JSON.stringify(transactions));return true}catch(e){alert('This browser could not save your record. Check available device storage.');return false}}
+function render(){
+ const income=transactions.filter(x=>x.type==='income').reduce((s,x)=>s+x.amount,0);
+ const expense=transactions.filter(x=>x.type==='expense').reduce((s,x)=>s+x.amount,0);
+ document.getElementById('balance').textContent=money(income-expense);
+ document.getElementById('incomeTotal').textContent=money(income);
+ document.getElementById('expenseTotal').textContent=money(expense);
+ document.getElementById('count').textContent=transactions.length+' record'+(transactions.length===1?'':'s');
+ const root=document.getElementById('transactions');
+ if(!transactions.length){root.innerHTML='<div class="empty">No transactions yet.<br>Add your first income or expense to begin.</div>';return}
+ root.innerHTML='';
+ [...transactions].sort((a,b)=>b.created-a.created).forEach(x=>{
+  const row=document.createElement('div');row.className='item';
+  const dot=document.createElement('div');dot.className='dot';dot.textContent=x.type==='income'?'↙':'↗';
+  const details=document.createElement('div');details.className='details';
+  const title=document.createElement('strong');title.textContent=x.description;
+  const sub=document.createElement('small');sub.textContent=x.category+' · '+new Date(x.created).toLocaleString();
+  details.append(title,sub);
+  const val=document.createElement('div');val.className='itemamount '+(x.type==='income'?'positive':'negative');val.textContent=(x.type==='income'?'+':'−')+money(x.amount);
+  const del=document.createElement('button');del.className='del';del.type='button';del.textContent='×';del.setAttribute('aria-label','Delete '+x.description);del.onclick=()=>{if(confirm('Delete this transaction?')){transactions=transactions.filter(t=>t.id!==x.id);save();render()}};
+  row.append(dot,details,val,del);root.append(row);
+ });
+}
+function openForm(type){currentType=type;document.getElementById('formTitle').textContent=type==='income'?'Add income':'Add expense';document.getElementById('typeHint').textContent=type==='income'?'Record money received.':'Record money spent.';document.getElementById('entryDialog').showModal();setTimeout(()=>document.getElementById('description').focus(),100)}
+function closeForm(){document.getElementById('entryDialog').close();document.getElementById('entryForm').reset()}
+document.getElementById('entryForm').addEventListener('submit',e=>{
+ e.preventDefault();const description=document.getElementById('description').value.trim();const amount=Number(document.getElementById('amount').value);const category=document.getElementById('category').value;
+ if(!description||!Number.isFinite(amount)||amount<=0){alert('Please enter a description and an amount greater than zero.');return}
+ const item={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),type:currentType,description,amount,category,created:Date.now()};
+ transactions.push(item);if(save()){render();closeForm()}
+});
+render();
+</script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script>
+</body>
+</html>
